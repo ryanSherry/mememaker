@@ -21,7 +21,7 @@ import java.io.OutputStream;
 public class FileUtilities {
 
     public static void saveAssetImage(Context context, String assetName) {
-        File fileDirectory = context.getFilesDir();
+        File fileDirectory = getFileDirectory(context);
         File fileToWrite = new File(fileDirectory, assetName);
 
         AssetManager assetManager = context.getAssets();
@@ -37,6 +37,31 @@ public class FileUtilities {
 
     }
 
+    public static File getFileDirectory(Context context) {
+        String storageType = StorageType.INTERNAL;
+        if(storageType.equals(StorageType.INTERNAL)) {
+            return context.getFilesDir();
+        } else {
+            if(isExternalStorageAvailable()) {
+                if(storageType.equals(StorageType.PRIVATE_EXTERNAL))) {
+                    return context.getExternalFilesDir(null);
+                } else {
+                    return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);`
+                }
+            } else {
+                return context.getFilesDir();
+            }
+        }
+    }
+
+    public static boolean isExternalStorageAvailable() {
+        String state = Environment.getExternalStorageState();
+        if(Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
     private static void copyFile(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
         int read;
@@ -46,7 +71,7 @@ public class FileUtilities {
     }
 
     public static File [] listFiles(Context context) {
-        File fileDirectory = context.getFilesDir();
+        File fileDirectory = getFileDirectory(context);
         File [] filteredFiles = fileDirectory.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
@@ -79,7 +104,7 @@ public class FileUtilities {
 
 
     public static void saveImage(Context context, Bitmap bitmap, String name) {
-        File fileDirectory = context.getFilesDir();
+        File fileDirectory = getFileDirectory(context);
         File fileToWrite = new File(fileDirectory, name);
 
         try {
