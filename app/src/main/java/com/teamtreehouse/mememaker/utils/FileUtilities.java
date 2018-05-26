@@ -38,15 +38,18 @@ public class FileUtilities {
     }
 
     public static File getFileDirectory(Context context) {
-        String storageType = StorageType.INTERNAL;
+
+        MemeMakerApplicationSettings settings = new MemeMakerApplicationSettings(context);
+        String storageType = settings.getStoragePreference();
+
         if(storageType.equals(StorageType.INTERNAL)) {
             return context.getFilesDir();
         } else {
             if(isExternalStorageAvailable()) {
-                if(storageType.equals(StorageType.PRIVATE_EXTERNAL))) {
+                if(storageType.equals(StorageType.PRIVATE_EXTERNAL)) {
                     return context.getExternalFilesDir(null);
                 } else {
-                    return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);`
+                    return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
                 }
             } else {
                 return context.getFilesDir();
